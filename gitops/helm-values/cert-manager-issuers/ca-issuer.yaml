@@ -1,0 +1,8 @@
+# Bước 3: ClusterIssuer chính — dùng CA cert ở bước 2 để ký mọi TLS cert trong cluster
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: bee-local-ca-issuer
+spec:
+  ca:
+    secretName: bee-local-ca-secret

@@ -1,0 +1,22 @@
+# Bước 2: CA Certificate cho bee.local (tự ký bởi selfsigned-issuer)
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bee-local-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: bee.local CA
+  subject:
+    organizations:
+      - Bee OF1
+  secretName: bee-local-ca-secret
+  duration: 87600h   # 10 năm
+  renewBefore: 720h  # renew trước 30 ngày
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io

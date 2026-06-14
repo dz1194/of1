@@ -1,0 +1,44 @@
+replicaCount: 1
+
+# n8n encryption key — bảo vệ credentials lưu trong DB
+# kubectl create secret generic n8n-secret -n n8n \
+#   --from-literal=N8N_ENCRYPTION_KEY=$(openssl rand -hex 32)
+secret:
+  existingSecret: n8n-secret
+  existingSecretKey: N8N_ENCRYPTION_KEY
+
+config:
+  generic:
+    timezone: Asia/Ho_Chi_Minh
+  database:
+    type: sqlite   # đủ dùng cho automation load thấp; đổi sang postgres nếu cần HA
+  # Webhook URL — n8n dùng để tạo webhook endpoint gửi cho OpenProject
+  webhookUrl: https://n8n.bee.local
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: bee-local-ca-issuer
+  hosts:
+    - host: n8n.bee.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: n8n-tls
+      hosts:
+        - n8n.bee.local
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 5Gi
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

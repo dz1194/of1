@@ -1,0 +1,50 @@
+mode: standalone
+
+# Credentials — KHÔNG hardcode ở đây.
+# Tạo Secret trước khi sync:
+#   kubectl create secret generic minio-credentials -n minio \
+#     --from-literal=rootUser=minioadmin \
+#     --from-literal=rootPassword=CHANGE_ME_STRONG_PASSWORD
+existingSecret: minio-credentials
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 50Gi
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+
+buckets:
+  - name: harbor-registry
+    policy: none
+    purge: false
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: bee-local-ca-issuer
+  hosts:
+    - minio.bee.local
+  tls:
+    - secretName: minio-tls
+      hosts:
+        - minio.bee.local
+
+consoleIngress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: bee-local-ca-issuer
+  hosts:
+    - minio-console.bee.local
+  tls:
+    - secretName: minio-console-tls
+      hosts:
+        - minio-console.bee.local

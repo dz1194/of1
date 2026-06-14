@@ -1,0 +1,7 @@
+# Bước 1: ClusterIssuer bootstrapping (self-signed, chỉ dùng để ký CA cert bên dưới)
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}

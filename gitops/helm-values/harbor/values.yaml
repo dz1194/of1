@@ -1,0 +1,105 @@
+expose:
+  type: ingress
+  tls:
+    enabled: true
+    certSource: secret
+    secret:
+      secretName: harbor-tls
+  ingress:
+    hosts:
+      core: harbor.bee.local
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: bee-local-ca-issuer
+
+externalURL: https://harbor.bee.local
+
+# Credentials — tạo Secret trước khi sync:
+#   kubectl create secret generic harbor-admin-secret -n harbor \
+#     --from-literal=HARBOR_ADMIN_PASSWORD=CHANGE_ME_STRONG_PASSWORD
+existingSecretAdminPassword: harbor-admin-secret
+existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD
+
+# Secret key bảo vệ session & token (16+ ký tự ngẫu nhiên)
+# kubectl create secret generic harbor-secret-key -n harbor \
+#   --from-literal=secretKey=CHANGE_ME_16CHARS_KEY
+existingSecretSecretKey: harbor-secret-key
+
+database:
+  type: internal
+  internal:
+    password: ""          # dùng existingSecret bên dưới
+    existingSecret: harbor-db-secret
+    existingSecretKey: POSTGRES_PASSWORD
+
+redis:
+  type: internal
+
+persistence:
+  enabled: true
+  resourcePolicy: keep
+  imageChartStorage:
+    # Harbor lưu image layers trên MinIO (S3-compatible)
+    type: s3
+    s3:
+      # Endpoint nội bộ của MinIO trong cluster
+      regionendpoint: http://minio.minio.svc.cluster.local:9000
+      bucket: harbor-registry
+      region: us-east-1       # MinIO chấp nhận bất kỳ giá trị nào ở đây
+      secure: false           # dùng HTTP nội bộ, TLS chỉ ở ingress
+      # Credentials từ Secret:
+      # kubectl create secret generic harbor-s3-secret -n harbor \
+      #   --from-literal=REGISTRY_STORAGE_S3_ACCESSKEY=minioadmin \
+      #   --from-literal=REGISTRY_STORAGE_S3_SECRETKEY=CHANGE_ME_STRONG_PASSWORD
+      existingSecret: harbor-s3-secret
+
+  persistentVolumeClaim:
+    jobservice:
+      size: 1Gi
+      storageClass: longhorn
+    database:
+      size: 1Gi
+      storageClass: longhorn
+    redis:
+      size: 1Gi
+      storageClass: longhorn
+    trivy:
+      size: 5Gi
+      storageClass: longhorn
+
+# Resource limits
+core:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+registry:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+jobservice:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+trivy:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi

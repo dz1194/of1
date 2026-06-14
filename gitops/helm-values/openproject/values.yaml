@@ -1,0 +1,75 @@
+openproject:
+  host: openproject.bee.local
+  https: true
+  hsts: true
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: bee-local-ca-issuer
+  hosts:
+    - openproject.bee.local
+  tls:
+    - secretName: openproject-tls
+      hosts:
+        - openproject.bee.local
+
+# SMTP — điền theo mail server nội bộ
+environment:
+  OPENPROJECT_EMAIL__DELIVERY__METHOD: smtp
+  OPENPROJECT_SMTP__ADDRESS: smtp.bee.local
+  OPENPROJECT_SMTP__PORT: "587"
+  OPENPROJECT_SMTP__DOMAIN: bee.local
+  OPENPROJECT_RAILS__MAX__THREADS: "16"
+
+# Credentials — tạo Secret trước khi sync:
+#   kubectl create secret generic openproject-env-secret -n openproject \
+#     --from-literal=DATABASE_URL="postgres://postgres:CHANGE_ME@openproject-postgresql/openproject?pool=20" \
+#     --from-literal=OPENPROJECT_SECRET__KEY__BASE=$(openssl rand -hex 64)
+envFromSecret: openproject-env-secret
+
+postgresql:
+  enabled: true
+  auth:
+    # kubectl create secret generic openproject-postgresql -n openproject \
+    #   --from-literal=postgres-password=CHANGE_ME \
+    #   --from-literal=password=CHANGE_ME
+    existingSecret: openproject-postgresql
+  primary:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 20Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi     # Guaranteed QoS: request == limit
+
+web:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1500m
+      memory: 2Gi
+
+worker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 30Gi    # assets (attachments, repos)
