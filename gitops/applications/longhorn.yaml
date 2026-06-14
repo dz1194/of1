@@ -27,3 +27,21 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true   # cần thiết cho Longhorn CRDs lớn
+      - RespectIgnoreDifferences=true
+  managedNamespaceMetadata:
+    labels:
+      app.kubernetes.io/managed-by: Helm
+  ignoreDifferences:
+    - group: longhorn.io
+      kind: Setting
+      jsonPointers:
+        - /value
+    - group: apps
+      kind: DaemonSet
+      jsonPointers:
+        - /spec/template/spec/initContainers
+    - group: ""
+      kind: ConfigMap
+      name: longhorn-default-setting
+      jsonPointers:
+        - /data
