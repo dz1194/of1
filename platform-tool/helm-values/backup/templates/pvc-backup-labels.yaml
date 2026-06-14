@@ -1,0 +1,30 @@
+# Label PVC để Longhorn RecurringJob tự động backup
+# Argo CD apply file này → các PVC được gắn label mà không cần chạy tay
+#
+# Cách hoạt động: patch object type PersistentVolumeClaim trong K8s.
+# Argo CD dùng server-side apply để merge label vào PVC đã tồn tại.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins
+  namespace: jenkins
+  labels:
+    recurring-job.longhorn.io/daily-backup: "enabled"
+    recurring-job.longhorn.io/snapshot-4h: "enabled"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-harbor-database-0
+  namespace: harbor
+  labels:
+    recurring-job.longhorn.io/daily-backup: "enabled"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-sonarqube-postgresql-0
+  namespace: sonarqube
+  labels:
+    recurring-job.longhorn.io/daily-backup: "enabled"

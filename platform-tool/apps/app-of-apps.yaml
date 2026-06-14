@@ -1,0 +1,25 @@
+# Root Application — "App of Apps" pattern
+# Apply thủ công 1 lần (qua bootstrap.sh). Sau đó Argo CD tự quản lý.
+# Argo CD sẽ đọc thư mục apps/ từ Git và tạo tất cả Application bên dưới.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: YOUR_GIT_REPO_URL     # bootstrap.sh tự patch giá trị này
+    targetRevision: YOUR_GIT_BRANCH
+    path: apps
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true      # xóa Application nếu file bị xóa khỏi Git
+      selfHeal: true   # tự revert nếu ai đó sửa tay trên cluster
+    syncOptions:
+      - CreateNamespace=true

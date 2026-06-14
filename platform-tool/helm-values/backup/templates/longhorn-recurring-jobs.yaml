@@ -1,0 +1,29 @@
+# Longhorn RecurringJob — managed by Argo CD (wave 3)
+# Sau khi apply, label PVC muốn backup:
+#   kubectl label pvc <name> -n <ns> recurring-job.longhorn.io/daily-backup=enabled
+---
+# Snapshot mỗi 4 tiếng, giữ 6 bản — recover nhanh khỏi xóa nhầm
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: snapshot-4h
+  namespace: longhorn-system
+spec:
+  cron: "0 */4 * * *"
+  task: snapshot
+  retain: 6
+  concurrency: 1
+  labels: {}
+---
+# Backup ra CMC S3 lúc 01:00 hàng ngày, giữ 7 bản
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: daily-backup
+  namespace: longhorn-system
+spec:
+  cron: "0 1 * * *"
+  task: backup
+  retain: 7
+  concurrency: 1
+  labels: {}

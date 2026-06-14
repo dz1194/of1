@@ -1,0 +1,29 @@
+# MetalLB IP pool — ĐÂY LÀ FILE CẦN CHỈNH THEO MẠNG CỦA BẠN
+#
+# Cách xác định dải IP:
+#   - Phải cùng subnet với node (ví dụ node IP 192.168.1.10 → pool trong 192.168.1.x)
+#   - Phải là IP KHÔNG do DHCP cấp (đặt ngoài DHCP range hoặc dùng DHCP reservation)
+#   - Ví dụ: DHCP range 192.168.1.1-200, đặt MetalLB pool 192.168.1.210-192.168.1.220
+#
+# Cần bao nhiêu IP?
+#   Mỗi Service type=LoadBalancer tiêu thụ 1 IP.
+#   Dự án này chỉ cần 1 IP cho ingress-nginx. Dành thêm vài IP dự phòng.
+---
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: platform-pool
+  namespace: metallb-system
+spec:
+  addresses:
+    - 192.168.110.50-192.168.110.100   # ← THAY bằng dải IP thật của mạng bạn
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: platform-l2
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+    - platform-pool
+  # Không khai nodeSelectors → tất cả node đều có thể announce

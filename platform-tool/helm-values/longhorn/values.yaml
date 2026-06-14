@@ -1,0 +1,41 @@
+# Longhorn values — managed by Argo CD (wave 0)
+# Thay đổi file này + git push → Argo CD tự helm upgrade, không cần chạy tay.
+
+defaultSettings:
+  defaultReplicaCount: 1   # lab: 1 node. Tăng lên 2-3 khi thêm node.
+  # Backup target trỏ CMC S3 (off-site). KHÔNG trỏ về MinIO (circular dependency).
+  backupTarget: "s3://platform-backup@hn-1/"
+  backupTargetCredentialSecret: "longhorn-backup-secret"   # tạo bởi create-secrets.sh
+  # Đặt Longhorn làm default StorageClass
+  defaultDataLocality: best-effort
+
+longhornManager:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+longhornUI:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+longhornDriver:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+persistence:
+  defaultClass: true          # set Longhorn làm default StorageClass
+  defaultClassReplicaCount: 1 # đồng bộ với defaultSettings.defaultReplicaCount

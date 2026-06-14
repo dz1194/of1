@@ -1,0 +1,119 @@
+# Harbor values — managed by Argo CD (wave 1)
+# Depends on: MinIO (wave 0) phải Healthy trước.
+
+expose:
+  type: ingress
+  tls:
+    enabled: true
+    certSource: auto
+  ingress:
+    hosts:
+      core: harbor.example.local   # ← thay bằng domain thật
+    className: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "0"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
+
+externalURL: https://harbor.example.local   # ← thay bằng domain thật
+
+# Credentials đọc từ Secrets (tạo bởi create-secrets.sh)
+existingSecretAdminPassword: "harbor-admin"
+existingSecretAdminPasswordKey: "HARBOR_ADMIN_PASSWORD"
+existingSecretSecretKey: "harbor-secret-key"
+
+database:
+  type: internal
+  internal:
+    # Password từ Secret
+    existingSecret: "harbor-database-password"
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "512Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"   # Guaranteed QoS: req == limit
+    persistence:
+      storageClass: "longhorn"
+      size: 1Gi
+
+redis:
+  type: internal
+  internal:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+    persistence:
+      storageClass: "longhorn"
+      size: 1Gi
+
+persistence:
+  enabled: true
+  imageChartStorage:
+    # Registry backend = MinIO (LIVE, on-cluster)
+    type: s3
+    s3:
+      regionendpoint: "http://minio.minio.svc.cluster.local:9000"
+      bucket: "harbor-registry"
+      region: "us-east-1"      # MinIO bỏ qua region, nhưng field bắt buộc
+      existingSecret: "minio-harbor-creds"
+      secure: false            # HTTP nội bộ; đổi true khi bật TLS cho MinIO
+      v4auth: true
+      forcepathstyle: true     # bắt buộc với S3-compatible
+  persistentVolumeClaim:
+    jobservice:
+      storageClass: "longhorn"
+      size: 1Gi
+    trivy:
+      storageClass: "longhorn"
+      size: 5Gi
+
+core:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+registry:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+jobservice:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+portal:
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+trivy:
+  enabled: true
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"

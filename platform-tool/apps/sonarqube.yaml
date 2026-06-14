@@ -1,0 +1,32 @@
+# wave 1 — song song với Harbor, chờ wave 0 Healthy
+# SonarQube cần: Longhorn PVC (app data + bundled Postgres)
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sonarqube
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://SonarSource.github.io/helm-chart-sonarqube
+      chart: sonarqube
+      targetRevision: "10.x"
+      helm:
+        valueFiles:
+          - $values/helm-values/sonarqube/values.yaml
+    - repoURL: YOUR_GIT_REPO_URL
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: sonarqube
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

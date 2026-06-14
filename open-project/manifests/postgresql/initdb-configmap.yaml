@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-initdb-scripts
+  namespace: openproject
+data:
+  01-create-users.sql: |
+    CREATE USER grafana_ro WITH PASSWORD 'GRAFANA_RO_PASSWORD_PLACEHOLDER';
+    GRANT CONNECT ON DATABASE openproject TO grafana_ro;
+    GRANT USAGE ON SCHEMA public TO grafana_ro;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public
+      GRANT SELECT ON TABLES TO grafana_ro;
+
+    CREATE USER n8n WITH PASSWORD 'N8N_DB_PASSWORD_PLACEHOLDER';
+    CREATE DATABASE n8n OWNER n8n;

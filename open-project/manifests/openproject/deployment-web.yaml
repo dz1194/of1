@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openproject-web
+  namespace: openproject
+  labels:
+    app: openproject
+    component: web
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: openproject
+      component: web
+  template:
+    metadata:
+      labels:
+        app: openproject
+        component: web
+    spec:
+      initContainers:
+        - name: db-migrate
+          image: openproject/community:14.3.0
+          command: ["./docker/prod/migrate"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+          env:
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-secret
+                  key: secret-key-base
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-db-secret
+                  key: database-url
+            - name: OPENPROJECT_FOG__CREDENTIALS__AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-minio-secret
+                  key: access-key
+            - name: OPENPROJECT_FOG__CREDENTIALS__AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-minio-secret
+                  key: secret-key
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: 500m
+
+      containers:
+        - name: web
+          image: openproject/community:14.3.0
+          command: ["./docker/prod/web"]
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+          env:
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-secret
+                  key: secret-key-base
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-db-secret
+                  key: database-url
+            - name: OPENPROJECT_FOG__CREDENTIALS__AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-minio-secret
+                  key: access-key
+            - name: OPENPROJECT_FOG__CREDENTIALS__AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openproject-minio-secret
+                  key: secret-key
+          volumeMounts:
+            - name: data
+              mountPath: /var/openproject/assets
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 500m
+            limits:
+              memory: 2Gi
+              cpu: 2
+          livenessProbe:
+            httpGet:
+              path: /health_check
+              port: 8080
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /health_check
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            failureThreshold: 3
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: openproject-data
+
+      terminationGracePeriodSeconds: 60

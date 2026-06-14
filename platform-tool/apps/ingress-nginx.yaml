@@ -1,0 +1,35 @@
+# wave -1 — ingress-nginx phải Healthy trước Longhorn/MinIO/Harbor (wave 0+)
+# vì Harbor, SonarQube, Jenkins đều cần Ingress để expose UI.
+#
+# On-prem:  cần MetalLB cài trước (bootstrap/metallb-optional.sh) để Service nhận EXTERNAL-IP.
+# On cloud: cloud provider tự cấp External IP — không cần MetalLB.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ingress-nginx
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+    - repoURL: https://kubernetes.github.io/ingress-nginx
+      chart: ingress-nginx
+      targetRevision: "4.x"
+      helm:
+        valueFiles:
+          - $values/helm-values/ingress-nginx/values.yaml
+    - repoURL: YOUR_GIT_REPO_URL
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
