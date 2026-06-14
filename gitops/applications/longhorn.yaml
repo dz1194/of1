@@ -28,6 +28,7 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true   # cần thiết cho Longhorn CRDs lớn
       - RespectIgnoreDifferences=true
+      - SkipDryRunOnMissingResource=true
   managedNamespaceMetadata:
     labels:
       app.kubernetes.io/managed-by: Helm
