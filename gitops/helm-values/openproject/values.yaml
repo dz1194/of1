@@ -8,12 +8,10 @@ ingress:
   ingressClassName: nginx
   annotations:
     cert-manager.io/cluster-issuer: bee-local-ca-issuer
-  hosts:
-    - openproject.bee.local
+  host: openproject.bee.local
   tls:
-    - secretName: openproject-tls
-      hosts:
-        - openproject.bee.local
+    enabled: true
+    secretName: openproject-tls
 
 # SMTP — điền theo mail server nội bộ
 environment:
