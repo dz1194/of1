@@ -13,7 +13,7 @@ spec:
       targetRevision: 5.7.0
       helm:
         valueFiles:
-          - $values/helm-values/jenkins/values.yaml
+          - $values/gitops/helm-values/jenkins/values.yaml
     - repoURL: https://github.com/dz1194/of1.git
       targetRevision: HEAD
       ref: values

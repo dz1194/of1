@@ -13,7 +13,7 @@ spec:
       targetRevision: 0.25.2
       helm:
         valueFiles:
-          - $values/helm-values/n8n/values.yaml
+          - $values/gitops/helm-values/n8n/values.yaml
     - repoURL: https://github.com/dz1194/of1.git
       targetRevision: HEAD
       ref: values
