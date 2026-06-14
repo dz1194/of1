@@ -17,7 +17,7 @@ spec:
       targetRevision: "1.7.x"
       helm:
         valueFiles:
-          - $values/helm-values/longhorn/values.yaml
+          - $values/platform-tool/helm-values/longhorn/values.yaml
     # Source 2: values.yaml từ Git repo của bạn
     - repoURL: https://github.com/dz1194/of1.git   # ← thay (hoặc để bootstrap.sh patch)
       targetRevision: HEAD

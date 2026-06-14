@@ -17,7 +17,7 @@ spec:
       targetRevision: "10.x"
       helm:
         valueFiles:
-          - $values/helm-values/sonarqube/values.yaml
+          - $values/platform-tool/helm-values/sonarqube/values.yaml
     - repoURL: https://github.com/dz1194/of1.git
       targetRevision: HEAD
       ref: values

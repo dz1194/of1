@@ -8,9 +8,9 @@ metadata:
 spec:
   project: of1
   source:
-    repoURL: https://github.com/bee-corp/of1.git
-    targetRevision: HEAD
-    path: manifests/grafana
+    repoURL: https://github.com/dz1194/of1.git
+    targetRevision: main
+    path: open-project/manifests/grafana
 
   destination:
     server: https://kubernetes.default.svc

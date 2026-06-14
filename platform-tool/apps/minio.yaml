@@ -18,7 +18,7 @@ spec:
       targetRevision: "5.x"
       helm:
         valueFiles:
-          - $values/helm-values/minio/values.yaml
+          - $values/platform-tool/helm-values/minio/values.yaml
     - repoURL: https://github.com/dz1194/of1.git
       targetRevision: HEAD
       ref: values

@@ -4,13 +4,13 @@
 # Có thể chạy lại bất kỳ lúc nào để thêm App-of-Apps mới.
 #
 # Cách dùng:
-#   ./apply-apps.sh                        # apply tất cả entries trong APPS_LIST
-#   ./apply-apps.sh ../apps/app-of-apps.yaml   # apply 1 file cụ thể
+#   ./apply-apps.sh                              # apply tất cả entries trong APPS_LIST
+#   ./apply-apps.sh ../apps/app-of-apps.yaml     # apply 1 file cụ thể
+#
+# Lưu ý: repoURL và targetRevision đọc thẳng từ yaml — không cần sửa script này.
+#         Chỉ cần đảm bảo các file yaml đã có đúng repoURL trước khi chạy.
 set -euo pipefail
 
-# ── CẤU HÌNH — thay trước khi chạy ───────────────────────────────────────
-GIT_REPO_URL="https://github.com/YOUR_ORG/bee-infra.git"   # ← thay
-GIT_BRANCH="main"
 ARGOCD_NAMESPACE="argocd"
 
 # Danh sách App-of-Apps cần apply (theo thứ tự).
@@ -19,7 +19,6 @@ APPS_LIST=(
   "../apps/app-of-apps.yaml"                              # platform-tool
   "../../open-project/argocd/apps/app-of-apps.yaml"      # OF1 stack
 )
-# ─────────────────────────────────────────────────────────────────────────
 
 echo "=== Check Argo CD đang chạy ==="
 kubectl get deployment argocd-server -n "$ARGOCD_NAMESPACE" &>/dev/null \
@@ -38,8 +37,7 @@ for APP_FILE in "${APPS_LIST[@]}"; do
     continue
   fi
   echo "  → $APP_FILE"
-  sed "s|https://github.com/dz1194/of1.git|$GIT_REPO_URL|g; s|main|$GIT_BRANCH|g" \
-    "$APP_FILE" | kubectl apply -f -
+  kubectl apply -f "$APP_FILE"
 done
 
 echo ""
