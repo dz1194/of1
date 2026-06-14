@@ -26,9 +26,10 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true   # cần thiết cho Longhorn CRDs lớn
+      - ServerSideApply=true
       - RespectIgnoreDifferences=true
       - SkipDryRunOnMissingResource=true
+      - SkipHooks=true          # bỏ sau khi install xong lần đầu
   managedNamespaceMetadata:
     labels:
       app.kubernetes.io/managed-by: Helm
