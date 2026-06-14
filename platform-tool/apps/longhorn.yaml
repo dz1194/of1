@@ -19,7 +19,7 @@ spec:
         valueFiles:
           - $values/helm-values/longhorn/values.yaml
     # Source 2: values.yaml từ Git repo của bạn
-    - repoURL: YOUR_GIT_REPO_URL   # ← thay (hoặc để bootstrap.sh patch)
+    - repoURL: https://github.com/dz1194/of1.git   # ← thay (hoặc để bootstrap.sh patch)
       targetRevision: HEAD
       ref: values
   destination:

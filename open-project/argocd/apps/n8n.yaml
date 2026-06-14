@@ -8,7 +8,7 @@ metadata:
 spec:
   project: of1
   source:
-    repoURL: https://github.com/YOUR_ORG/open-project.git
+    repoURL: https://github.com/bee-corp/of1.git
     targetRevision: HEAD
     path: manifests/n8n
 

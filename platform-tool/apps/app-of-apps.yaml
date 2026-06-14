@@ -11,8 +11,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: YOUR_GIT_REPO_URL     # bootstrap.sh tự patch giá trị này
-    targetRevision: YOUR_GIT_BRANCH
+    repoURL: https://github.com/dz1194/of1.git     # bootstrap.sh tự patch giá trị này
+    targetRevision: main
     path: apps
   destination:
     server: https://kubernetes.default.svc

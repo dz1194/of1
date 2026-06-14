@@ -12,7 +12,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: YOUR_GIT_REPO_URL
+    repoURL: https://github.com/dz1194/of1.git
     targetRevision: HEAD
     path: helm-values/backup/templates
   destination:

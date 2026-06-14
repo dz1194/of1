@@ -21,7 +21,7 @@ spec:
       helm:
         valueFiles:
           - $values/helm-values/ingress-nginx/values.yaml
-    - repoURL: YOUR_GIT_REPO_URL
+    - repoURL: https://github.com/dz1194/of1.git
       targetRevision: HEAD
       ref: values
   destination:

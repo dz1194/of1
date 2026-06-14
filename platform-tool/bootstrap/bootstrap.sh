@@ -47,13 +47,7 @@ helm upgrade --install argocd argo/argo-cd \
   --wait --timeout 10m
 
 echo ""
-echo "=== [4/5] Apply App-of-Apps (root Application) ==="
-# Patch GIT_REPO_URL vào app-of-apps trước khi apply
-sed "s|YOUR_GIT_REPO_URL|$GIT_REPO_URL|g; s|YOUR_GIT_BRANCH|$GIT_BRANCH|g" \
-  ../apps/app-of-apps.yaml | kubectl apply -f -
-
-echo ""
-echo "=== [5/5] Done — Argo CD sẽ tự sync phần còn lại ==="
+echo "=== [4/4] Done — Argo CD đã sẵn sàng ==="
 ARGOCD_PASS=$(kubectl get secret argocd-initial-admin-secret -n "$ARGOCD_NAMESPACE" \
   -o jsonpath='{.data.password}' | base64 -d)
 ARGOCD_HOST=$(kubectl get ingress -n "$ARGOCD_NAMESPACE" \
@@ -64,13 +58,5 @@ echo "  Argo CD UI : https://$ARGOCD_HOST"
 echo "  Username   : admin"
 echo "  Password   : $ARGOCD_PASS  (đổi ngay sau khi login)"
 echo ""
-echo "  Theo dõi sync tiến trình:"
-echo "    kubectl get applications -n $ARGOCD_NAMESPACE -w"
-echo ""
-echo "  Sync-wave order:"
-echo "    wave -2 → MetalLB"
-echo "    wave -1 → MetalLB IP config, ingress-nginx  (cho wave -2 Healthy)"
-echo "    wave  0 → Longhorn, MinIO                   (cho wave -1 Healthy)"
-echo "    wave  1 → Harbor, SonarQube                 (cho wave  0 Healthy)"
-echo "    wave  2 → Jenkins                           (cho wave  1 Healthy)"
-echo "    wave  3 → Backup jobs                       (cho wave  2 Healthy)"
+echo "  Bước tiếp theo — apply App-of-Apps:"
+echo "    bash apply-apps.sh"
