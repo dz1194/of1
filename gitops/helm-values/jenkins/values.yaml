@@ -3,10 +3,11 @@ controller:
   #   kubectl create secret generic jenkins-admin-secret -n jenkins \
   #     --from-literal=jenkins-admin-user=admin \
   #     --from-literal=jenkins-admin-password=CHANGE_ME_STRONG_PASSWORD
-  adminSecret: false
-  existingSecret: jenkins-admin-secret
-  adminUser: jenkins-admin-user
-  adminPassword: jenkins-admin-password
+  admin:
+    createSecret: false
+    existingSecret: jenkins-admin-secret
+    userKey: jenkins-admin-user
+    passwordKey: jenkins-admin-password
 
   resources:
     requests:

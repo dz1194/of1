@@ -15,7 +15,7 @@ spec:
         valueFiles:
           - $values/gitops/helm-values/harbor/values.yaml
     - repoURL: https://github.com/dz1194/of1.git
-      targetRevision: HEAD
+      targetRevision: main
       ref: values
   destination:
     server: https://kubernetes.default.svc

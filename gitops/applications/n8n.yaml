@@ -8,14 +8,14 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://8gears.container-registry.com/chartrepo/library
+    - repoURL: oci://8gears.container-registry.com/library
       chart: n8n
-      targetRevision: 0.25.2
+      targetRevision: 2.0.1
       helm:
         valueFiles:
           - $values/gitops/helm-values/n8n/values.yaml
     - repoURL: https://github.com/dz1194/of1.git
-      targetRevision: HEAD
+      targetRevision: main
       ref: values
   destination:
     server: https://kubernetes.default.svc

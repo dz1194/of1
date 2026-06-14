@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/dz1194/of1.git
-    targetRevision: HEAD
+    targetRevision: main
     path: gitops/helm-values/cert-manager-issuers
   destination:
     server: https://kubernetes.default.svc
