@@ -1,11 +1,11 @@
 defaultSettings:
-  defaultReplicaCount: 1          # tăng lên 2-3 khi có thêm node
+  defaultReplicaCount: 2          # tăng lên 2-3 khi có thêm node
   backupTarget: ""                 # điền sau: s3://platform-backup@hn-1/
   backupTargetCredentialSecret: "" # longhorn-backup-secret (tạo riêng)
 
 persistence:
   defaultClass: true
-  defaultClassReplicaCount: 1
+  defaultClassReplicaCount: 2
 
 longhornUI:
   replicas: 1
