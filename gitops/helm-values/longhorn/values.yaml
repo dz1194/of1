@@ -1,3 +1,5 @@
+preUpgradeChecker:
+  jobEnabled: false
 defaultSettings:
   defaultReplicaCount: 2          # tăng lên 2-3 khi có thêm node
   backupTarget: ""                 # điền sau: s3://platform-backup@hn-1/
