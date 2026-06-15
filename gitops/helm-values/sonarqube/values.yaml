@@ -1,6 +1,5 @@
 replicaCount: 1
 
-# initSysctl: đặt vm.max_map_count cho Elasticsearch (yêu cầu privileged)
 initSysctl:
   enabled: true
   vmMaxMapCount: 262144
@@ -9,18 +8,14 @@ initSysctl:
 OpenShift:
   enabled: false
 
+service:
+  type: NodePort
+  externalPort: 9000
+  internalPort: 9000
+  nodePort: 30004
+
 ingress:
-  enabled: true
-  ingressClassName: nginx
-  annotations:
-    cert-manager.io/cluster-issuer: bee-local-ca-issuer
-  hosts:
-    - name: sonar.bee.local
-      path: /
-  tls:
-    - secretName: sonar-tls
-      hosts:
-        - sonar.bee.local
+  enabled: false
 
 resources:
   requests:
@@ -51,4 +46,4 @@ postgresql:
         memory: 512Mi
       limits:
         cpu: 500m
-        memory: 512Mi     # Guaranteed QoS: request == limit cho DB
+        memory: 512Mi

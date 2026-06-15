@@ -1,25 +1,16 @@
 replicaCount: 1
 
-# Admin credentials
-# kubectl create secret generic grafana-admin-secret -n grafana \
-#   --from-literal=admin-user=admin \
-#   --from-literal=admin-password=CHANGE_ME_STRONG_PASSWORD
 admin:
   existingSecret: grafana-admin-secret
   userKey: admin-user
   passwordKey: admin-password
 
+service:
+  type: NodePort
+  nodePort: 30008
+
 ingress:
-  enabled: true
-  ingressClassName: nginx
-  annotations:
-    cert-manager.io/cluster-issuer: bee-local-ca-issuer
-  hosts:
-    - grafana.bee.local
-  tls:
-    - secretName: grafana-tls
-      hosts:
-        - grafana.bee.local
+  enabled: false
 
 resources:
   requests:
@@ -34,10 +25,6 @@ persistence:
   storageClass: longhorn
   size: 5Gi
 
-# Datasource: PostgreSQL read-only user trỏ vào DB của OpenProject
-# Tạo user grafana_ro trên PostgreSQL của OpenProject trước (xem §2.4 trong deployment guide)
-# kubectl create secret generic grafana-datasource-secret -n grafana \
-#   --from-literal=password=CHANGE_ME_RO_PASSWORD
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -62,7 +49,6 @@ extraSecretMounts:
     mountPath: /etc/secrets/datasource
     readOnly: true
 
-# Dashboard provisioning
 dashboardProviders:
   dashboardproviders.yaml:
     apiVersion: 1

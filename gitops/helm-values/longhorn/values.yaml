@@ -1,9 +1,10 @@
 preUpgradeChecker:
   jobEnabled: false
+
 defaultSettings:
-  defaultReplicaCount: 2          # tăng lên 2-3 khi có thêm node
-  backupTarget: ""                 # điền sau: s3://platform-backup@hn-1/
-  backupTargetCredentialSecret: "" # longhorn-backup-secret (tạo riêng)
+  defaultReplicaCount: 2
+  backupTarget: ""
+  backupTargetCredentialSecret: ""
 
 persistence:
   defaultClass: true
@@ -12,11 +13,10 @@ persistence:
 longhornUI:
   replicas: 1
 
+service:
+  ui:
+    type: NodePort
+    nodePort: 30001
+
 ingress:
-  enabled: true
-  ingressClassName: nginx
-  host: longhorn.bee.local
-  tls: true
-  tlsSecret: longhorn-tls
-  annotations:
-    cert-manager.io/cluster-issuer: bee-local-ca-issuer
+  enabled: false

@@ -1,10 +1,5 @@
 mode: standalone
 
-# Credentials — KHÔNG hardcode ở đây.
-# Tạo Secret trước khi sync:
-#   kubectl create secret generic minio-credentials -n minio \
-#     --from-literal=rootUser=minioadmin \
-#     --from-literal=rootPassword=CHANGE_ME_STRONG_PASSWORD
 existingSecret: minio-credentials
 
 persistence:
@@ -25,26 +20,18 @@ buckets:
     policy: none
     purge: false
 
+# MinIO API (S3 endpoint) — port 30009
+service:
+  type: NodePort
+  nodePort: 30009
+
+# MinIO Console — port 30003
+consoleService:
+  type: NodePort
+  nodePort: 30003
+
 ingress:
-  enabled: true
-  ingressClassName: nginx
-  annotations:
-    cert-manager.io/cluster-issuer: bee-local-ca-issuer
-  hosts:
-    - minio.bee.local
-  tls:
-    - secretName: minio-tls
-      hosts:
-        - minio.bee.local
+  enabled: false
 
 consoleIngress:
-  enabled: true
-  ingressClassName: nginx
-  annotations:
-    cert-manager.io/cluster-issuer: bee-local-ca-issuer
-  hosts:
-    - minio-console.bee.local
-  tls:
-    - secretName: minio-console-tls
-      hosts:
-        - minio-console.bee.local
+  enabled: false

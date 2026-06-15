@@ -1,13 +1,12 @@
 controller:
-  # Admin credentials — tạo Secret trước khi sync:
-  #   kubectl create secret generic jenkins-admin-secret -n jenkins \
-  #     --from-literal=jenkins-admin-user=admin \
-  #     --from-literal=jenkins-admin-password=CHANGE_ME_STRONG_PASSWORD
   admin:
     createSecret: false
     existingSecret: jenkins-admin-secret
     userKey: jenkins-admin-user
     passwordKey: jenkins-admin-password
+
+  serviceType: NodePort
+  nodePort: 30005
 
   resources:
     requests:
@@ -18,17 +17,8 @@ controller:
       memory: 2Gi
 
   ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: bee-local-ca-issuer
-    hostName: jenkins.bee.local
-    tls:
-      - secretName: jenkins-tls
-        hosts:
-          - jenkins.bee.local
+    enabled: false
 
-  # Plugins cài sẵn
   installPlugins:
     - kubernetes:latest
     - workflow-aggregator:latest
@@ -47,5 +37,4 @@ agent:
       cpu: 250m
       memory: 512Mi
     limits:
-      # Không đặt CPU limit cho agent để tránh throttling khi build burst
       memory: 2Gi
