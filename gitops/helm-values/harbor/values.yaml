@@ -8,7 +8,7 @@ expose:
         port: 80
         nodePort: 30002
 
-externalURL: http://192.168.1.100:30002   # ← đổi thành IP node của bạn
+externalURL: http://192.168.110.101:30002
 
 existingSecretAdminPassword: harbor-admin-secret
 existingSecretAdminPasswordKey: HARBOR_ADMIN_PASSWORD

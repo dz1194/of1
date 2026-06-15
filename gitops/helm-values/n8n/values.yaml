@@ -9,7 +9,7 @@ config:
     timezone: Asia/Ho_Chi_Minh
   database:
     type: sqlite
-  webhookUrl: http://192.168.1.100:30007   # ← đổi thành IP node của bạn
+  webhookUrl: http://192.168.110.101:30007
 
 service:
   type: NodePort

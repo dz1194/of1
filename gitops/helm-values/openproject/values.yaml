@@ -1,5 +1,5 @@
 openproject:
-  host: 192.168.1.100:30006   # ← đổi thành IP node của bạn
+  host: 192.168.110.101:30006
   https: false
   hsts: false
 
